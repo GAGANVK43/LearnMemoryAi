@@ -1,47 +1,95 @@
-# 🧠 LearnMemory AI — Personal Learning Memory & AI Tutor
+# LearnMemory AI — Execution Steps
 
-> **TAGLINE**: *"An AI that remembers what you learn and teaches it back to you."*
-
-LearnMemory AI turns student study sessions into structured learning memories and uses that memory bank to teach students based on their previous knowledge and identified weak areas.
+Follow these step-by-step instructions to set up, configure, and run LearnMemory AI locally.
 
 ---
 
-## 🎯 Core Hypothesis & Product Flow
+## 1. Prerequisites
 
+Ensure you have the following installed on your machine:
+
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
+- **Git**
+
+---
+
+## 2. Installation & Setup
+
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/GAGANVK43/LearnMemoryAi.git
+cd LearnMemoryAi
 ```
-STUDENT → Creates Account → Submits Study Session → AI Analyzes & Extracts Memory → Stores Personal Memory
-   ↓
-Student asks: "What did I learn?" → Memory Retrieval → AI recalls previous knowledge
-   ↓
-Student asks AI Tutor: "Teach me Java OOP" → AI acknowledges strong concepts & targets weak areas first!
+
+### Step 2: Install Dependencies
+```bash
+npm install
+```
+
+### Step 3: Configure Environment Variables
+Create a `.env` file in the root directory (or copy from `.env.example`):
+
+```env
+# Application Environment
+NODE_ENV="development"
+PORT=4000
+WEB_URL="http://localhost:3000"
+API_URL="http://localhost:4000/api"
+
+# Database Configuration (Zero-setup Local SQLite)
+DATABASE_URL="file:./dev.db"
+
+# Authentication Security
+JWT_SECRET="your_jwt_secret_key"
+JWT_EXPIRES_IN="7d"
+COOKIE_SECRET="your_cookie_secret_key"
+
+# Gemini AI Provider Configuration
+AI_PROVIDER="gemini"
+GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+GEMINI_MODEL="gemini-flash-latest"
 ```
 
 ---
 
-## 🚀 Key Features
+## 3. Database Setup
 
-1. **HttpOnly Cookie Authentication**: Private student memory isolated at database level (`where: userId`).
-2. **Study Sessions**: Submit raw study notes or session text.
-3. **AI Learning Analysis**: Automated extraction of topics, concepts, understanding levels, key points, examples, and weak areas validated via Zod schema.
-4. **Structured Personal Memory**: Deduplicated concept graph stored in PostgreSQL via Prisma ORM.
-5. **Ask My Memory**: Natural language query engine backed by stored student memories.
-6. **Personal AI Tutor**: Adaptive AI Tutor with 6 learning modes (`Explain Simply`, `Explain Deeply`, `Give Example`, `Give Hint`, `Quiz Me`, `Revise`).
-7. **Real-time Dashboard**: Live student stats (Sessions, Topics, Concepts, Weak Areas, Recent Learning).
+Initialize the SQLite database using Prisma:
 
----
+```bash
+# Push Prisma schema to SQLite dev database
+npx prisma db push --schema=apps/api/prisma/schema.prisma
 
-## 📦 Tech Stack
-
-- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, Lucide Icons.
-- **Backend**: NestJS, TypeScript, Passport JWT with HttpOnly cookies, Zod validation.
-- **Database**: PostgreSQL & Prisma ORM.
-- **AI Engine**: Provider Abstraction (`GeminiProvider` via `@google/generative-ai`, `LocalAIProvider`, `MockAIProvider`).
+# Generate Prisma Client
+npx prisma generate --schema=apps/api/prisma/schema.prisma
+```
 
 ---
 
-## 📄 Documentation Links
+## 4. Execution Steps
 
-- [Setup Guide](SETUP.md)
-- [Architecture Guide](ARCHITECTURE.md)
-- [AI Architecture](AI_ARCHITECTURE.md)
-- [Database Schema](DATABASE.md)
+### Step 1: Build the Backend API
+```bash
+npm run build --workspace=apps/api
+```
+
+### Step 2: Start the Backend API Server (Port 4000)
+```bash
+npm run start:prod --workspace=apps/api
+```
+
+### Step 3: Start the Web Frontend Dev Server (Port 3000)
+Open a second terminal window and run:
+
+```bash
+npm run dev --workspace=apps/web
+```
+
+---
+
+## 5. Verify & Access
+
+- **Web Application Frontend**: [http://localhost:3000](http://localhost:3000)
+- **Backend API**: [http://localhost:4000/api](http://localhost:4000/api)
+- **AI Health Check Endpoint**: [http://localhost:4000/api/ai/health](http://localhost:4000/api/ai/health)
