@@ -4,6 +4,19 @@ Follow these step-by-step instructions to set up, configure, and run LearnMemory
 
 ---
 
+## 📁 Directory Structure
+
+```text
+LearnMemoryAi/
+├── backend/          # NestJS Backend API (PostgreSQL/SQLite, Prisma, Gemini AI Provider)
+├── frontend/         # Next.js Frontend (Dark AI SaaS Theme, AI Tutor, Memory Bank)
+├── .env              # Environment Variables
+├── package.json      # Workspace Config
+└── README.md
+```
+
+---
+
 ## 1. Prerequisites
 
 Ensure you have the following installed on your machine:
@@ -55,14 +68,14 @@ GEMINI_MODEL="gemini-flash-latest"
 
 ## 3. Database Setup
 
-Initialize the SQLite database using Prisma:
+Initialize the SQLite database using Prisma inside the `backend` folder:
 
 ```bash
 # Push Prisma schema to SQLite dev database
-npx prisma db push --schema=apps/api/prisma/schema.prisma
+npx prisma db push --schema=backend/prisma/schema.prisma
 
 # Generate Prisma Client
-npx prisma generate --schema=apps/api/prisma/schema.prisma
+npx prisma generate --schema=backend/prisma/schema.prisma
 ```
 
 ---
@@ -71,19 +84,19 @@ npx prisma generate --schema=apps/api/prisma/schema.prisma
 
 ### Step 1: Build the Backend API
 ```bash
-npm run build --workspace=apps/api
+npm run build:backend
 ```
 
 ### Step 2: Start the Backend API Server (Port 4000)
 ```bash
-npm run start:prod --workspace=apps/api
+npm run start:backend
 ```
 
-### Step 3: Start the Web Frontend Dev Server (Port 3000)
+### Step 3: Start the Frontend Dev Server (Port 3000)
 Open a second terminal window and run:
 
 ```bash
-npm run dev --workspace=apps/web
+npm run dev:frontend
 ```
 
 ---

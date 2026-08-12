@@ -4,9 +4,16 @@
   "private": true,
   "description": "An AI that remembers what you learn and teaches it back to you.",
   "workspaces": [
-    "apps/*"
+    "backend",
+    "frontend"
   ],
   "scripts": {
+    "dev:backend": "npm run start:dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "start:backend": "npm run start:prod --workspace=backend",
+    "start:frontend": "npm run start --workspace=frontend",
     "dev": "npm run dev --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present"
