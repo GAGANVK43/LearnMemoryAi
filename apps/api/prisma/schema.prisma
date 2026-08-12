@@ -1,0 +1,138 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String              @id @default(uuid())
+  email        String              @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  studySessions StudySession[]
+  memories      LearningMemory[]
+  topics        Topic[]
+  concepts      Concept[]
+  weakAreas     WeakArea[]
+  conversations TutorConversation[]
+
+  @@map("users")
+}
+
+model StudySession {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  subject   String
+  content   String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  memories  LearningMemory[]
+
+  @@map("study_sessions")
+}
+
+model LearningMemory {
+  id                 String        @id @default(uuid())
+  userId             String
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studySessionId     String?
+  studySession       StudySession? @relation(fields: [studySessionId], references: [id], onDelete: SetNull)
+  
+  subject            String
+  topic              String
+  concept            String
+  summary            String?
+  explanation        String?
+  keyPoints          String?       // JSON stringified array
+  examples           String?       // JSON stringified array
+  questions          String?       // JSON stringified array
+  understandingLevel String        @default("LEARNING") // UNKNOWN, LEARNING, UNDERSTOOD, WEAK, STRONG
+  confidence         Float         @default(0.8)
+  isWeakArea         Boolean       @default(false)
+
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@index([userId, subject])
+  @@index([userId, topic])
+  @@index([userId, concept])
+  @@map("learning_memories")
+}
+
+model Topic {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  subject   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  concepts  Concept[]
+
+  @@unique([userId, subject, name])
+  @@map("topics")
+}
+
+model Concept {
+  id                 String   @id @default(uuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name               String
+  subject            String
+  topicId            String?
+  topic              Topic?   @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  understandingLevel String   @default("LEARNING") // UNKNOWN, LEARNING, UNDERSTOOD, WEAK, STRONG
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([userId, subject, name])
+  @@map("concepts")
+}
+
+model WeakArea {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conceptName String
+  subject     String
+  topic       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, subject, conceptName])
+  @@map("weak_areas")
+}
+
+model TutorConversation {
+  id        String         @id @default(uuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String         @default("New Chat")
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  messages  TutorMessage[]
+
+  @@map("tutor_conversations")
+}
+
+model TutorMessage {
+  id             String            @id @default(uuid())
+  conversationId String
+  conversation   TutorConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         String            // "user" | "tutor"
+  content        String
+  createdAt      DateTime          @default(now())
+
+  @@map("tutor_messages")
+}

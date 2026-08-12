@@ -1,0 +1,17 @@
+{
+  "name": "learnmemory-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An AI that remembers what you learn and teaches it back to you.",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

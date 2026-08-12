@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-gray-100 antialiased font-sans selection:bg-primary selection:text-white min-h-screen;
+  }
+}
+
+.glass-panel {
+  @apply bg-surface/90 backdrop-blur-md border border-surface-border rounded-2xl shadow-xl;
+}
+
+.glass-card {
+  @apply bg-surface-card border border-surface-border hover:border-primary/50 transition-all duration-200 rounded-2xl;
+}
+
+.btn-primary {
+  @apply bg-primary hover:bg-primary-hover text-white font-medium px-4 py-2.5 rounded-xl shadow-lg shadow-primary/25 transition-all duration-200 flex items-center justify-center gap-2 text-sm active:scale-95;
+}
+
+.btn-secondary {
+  @apply bg-surface-card hover:bg-surface-hover text-gray-200 border border-surface-border hover:border-gray-600 px-4 py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm active:scale-95;
+}
+
+.input-field {
+  @apply w-full px-4 py-3 rounded-xl bg-background border border-surface-border focus:border-primary text-white placeholder-gray-500 focus:outline-none transition-all duration-200 text-sm;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #232738;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
