@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { Brain, Mail, Lock, Eye, EyeOff, ShieldCheck, ArrowRight, BookOpen, Target, BarChart2, CheckSquare } from 'lucide-react';
+import { Brain, Mail, Lock, Eye, EyeOff, ShieldCheck, Target, BarChart2 } from 'lucide-react';
 import { apiFetch } from '@/lib/api-client';
 
 export default function LoginPage() {
@@ -29,6 +28,10 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOAuth = (provider: string) => {
+    alert(`${provider} OAuth 2.0 requires GOOGLE_CLIENT_ID and GITHUB_CLIENT_ID configured in .env. Enter your Email & Password below to sign in instantly!`);
   };
 
   return (
@@ -104,7 +107,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Right Column: Login Card matching Reference Image 1 */}
+        {/* Right Column: Login Card */}
         <div className="lg:col-span-6">
           <div className="glass-panel p-8 md:p-10 border border-surface-border shadow-2xl space-y-6 bg-surface/90">
             <div className="text-center space-y-1">
@@ -185,10 +188,18 @@ export default function LoginPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <button className="btn-secondary py-2.5 text-xs">
+              <button
+                type="button"
+                onClick={() => handleOAuth('Google')}
+                className="btn-secondary py-2.5 text-xs hover:border-primary/40"
+              >
                 <span className="font-bold text-accent-rose mr-1">G</span> Google
               </button>
-              <button className="btn-secondary py-2.5 text-xs">
+              <button
+                type="button"
+                onClick={() => handleOAuth('GitHub')}
+                className="btn-secondary py-2.5 text-xs hover:border-primary/40"
+              >
                 <span className="font-bold text-gray-300 mr-1">🐙</span> GitHub
               </button>
             </div>
