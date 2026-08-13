@@ -98,7 +98,8 @@ export class GeminiProvider implements AIProvider {
 
   async generateStructuredOutput(prompt: string): Promise<any> {
     const text = await this.generateWithFallback(prompt, 'structured-output');
-    return JSON.parse(text);
+    const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(cleaned);
   }
 
   async analyzeImage(imageBuffer: Buffer, mimeType: string): Promise<string> {

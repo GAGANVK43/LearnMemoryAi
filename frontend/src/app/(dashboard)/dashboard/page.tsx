@@ -19,10 +19,10 @@ import {
   Code2,
   Terminal,
   Database,
-  Globe
+  Globe,
+  ClipboardList
 } from 'lucide-react';
 import { apiFetch } from '@/lib/api-client';
-import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<any>(null);
@@ -64,8 +64,6 @@ export default function DashboardPage() {
     return 'text-accent-cyan bg-accent-cyan/15 border-accent-cyan/30';
   };
 
-  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
   if (loading) {
     return (
       <div className="py-20 flex items-center justify-center text-gray-400 gap-3">
@@ -81,24 +79,27 @@ export default function DashboardPage() {
   const weakCount = stats?.totalWeakAreas || 0;
   const recentMemories = stats?.recentMemories || [];
   const weakAreas = stats?.weakAreas || [];
+  const userName = user?.name?.split(' ')[0] || 'Learner';
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Top Header Row matching Reference Image 3 */}
+      {/* Top Header Row */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
-            Welcome back, {user?.name?.split(' ')[0] || 'Learner'}! <span className="text-2xl">👋</span>
+            Welcome back, {userName}! <span className="text-2xl">👋</span>
           </h1>
           <p className="text-sm text-gray-400 mt-1 font-normal">
-            Here is your personal learning memory overview.
+            {sessionCount === 0
+              ? "Start your first learning session and I'll begin building your personal memory."
+              : 'Here is your personal learning memory overview.'}
           </p>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
           <Link href="/sessions/new" className="btn-primary text-xs font-semibold py-2.5 px-4">
             <Plus className="h-4 w-4 stroke-[2.5]" />
-            New Study Session
+            + Start Learning
           </Link>
           <Link href="/memory" className="btn-secondary text-xs font-medium py-2.5 px-3.5">
             <Search className="h-3.5 w-3.5 text-accent-cyan" />
@@ -106,12 +107,16 @@ export default function DashboardPage() {
           </Link>
           <Link href="/tutor" className="btn-secondary text-xs font-medium py-2.5 px-3.5">
             <Sparkles className="h-3.5 w-3.5 text-primary-light" />
-            AI Tutor
+            Ask AI Tutor
+          </Link>
+          <Link href="/quizzes" className="btn-secondary text-xs font-medium py-2.5 px-3.5">
+            <ClipboardList className="h-3.5 w-3.5 text-accent-amber" />
+            Take Quiz
           </Link>
         </div>
       </div>
 
-      {/* 4 Metric Cards matching Reference Image 3 */}
+      {/* 4 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Study Sessions */}
         <div className="glass-card p-5 space-y-3">
@@ -119,8 +124,8 @@ export default function DashboardPage() {
             <div className="h-10 w-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary-light">
               <BookOpen className="h-5 w-5" />
             </div>
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent-emerald/15 text-accent-emerald border border-accent-emerald/30">
-              ↑ 12% from last week
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface border border-surface-border text-gray-400">
+              {sessionCount === 0 ? 'Fresh Start' : 'Active'}
             </span>
           </div>
           <div>
@@ -135,8 +140,8 @@ export default function DashboardPage() {
             <div className="h-10 w-10 rounded-xl bg-accent-emerald/15 border border-accent-emerald/30 flex items-center justify-center text-accent-emerald">
               <Brain className="h-5 w-5" />
             </div>
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent-emerald/15 text-accent-emerald border border-accent-emerald/30">
-              ↑ 8% from last week
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface border border-surface-border text-gray-400">
+              {topicCount === 0 ? '0 Topics' : `${topicCount} Topics`}
             </span>
           </div>
           <div>
@@ -151,8 +156,8 @@ export default function DashboardPage() {
             <div className="h-10 w-10 rounded-xl bg-accent-cyan/15 border border-accent-cyan/30 flex items-center justify-center text-accent-cyan">
               <Lightbulb className="h-5 w-5" />
             </div>
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent-emerald/15 text-accent-emerald border border-accent-emerald/30">
-              ↑ 15% from last week
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface border border-surface-border text-gray-400">
+              {conceptCount === 0 ? '0 Concepts' : `${conceptCount} Concepts`}
             </span>
           </div>
           <div>
@@ -167,8 +172,8 @@ export default function DashboardPage() {
             <div className="h-10 w-10 rounded-xl bg-accent-rose/15 border border-accent-rose/30 flex items-center justify-center text-accent-rose">
               <AlertTriangle className="h-5 w-5" />
             </div>
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent-rose/15 text-accent-rose border border-accent-rose/30">
-              ↓ 3% from last week
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface border border-surface-border text-gray-400">
+              {weakCount === 0 ? 'Clean' : 'Needs Review'}
             </span>
           </div>
           <div>
@@ -200,7 +205,7 @@ export default function DashboardPage() {
                 Submit your first study material and Gemini AI will construct your learning memory.
               </p>
               <Link href="/sessions/new" className="btn-primary inline-flex py-2 px-4 text-xs font-semibold mt-2">
-                <Plus className="h-3.5 w-3.5" /> Create First Session
+                <Plus className="h-3.5 w-3.5" /> Start Learning
               </Link>
             </div>
           ) : (
@@ -260,7 +265,7 @@ export default function DashboardPage() {
               <Sparkles className="h-10 w-10 text-accent-emerald/50 mx-auto" />
               <p className="text-sm font-semibold text-white">No weak areas identified!</p>
               <p className="text-xs text-gray-400 max-w-xs mx-auto">
-                As you learn, Gemini AI will automatically detect confuse concepts and highlight them here for targeted revision.
+                As you learn, Gemini AI will automatically detect confused concepts and highlight them here for targeted revision.
               </p>
             </div>
           ) : (
@@ -281,7 +286,7 @@ export default function DashboardPage() {
 
                   <div className="flex items-center gap-3 shrink-0">
                     <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-accent-rose/15 text-accent-rose border border-accent-rose/30">
-                      HIGH
+                      NEEDS REVIEW
                     </span>
                     <Link
                       href={`/tutor?q=Teach me ${encodeURIComponent(weak.conceptName)}`}
@@ -298,64 +303,36 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* Bottom Widgets matching Reference Image 3 */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Widget 1: Study Streak */}
-        <div className="lg:col-span-5 glass-panel p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <Flame className="h-5 w-5 text-accent-amber animate-pulse" />
-            <h3 className="text-base font-bold text-white">Study Streak</h3>
+      {/* Bottom Recommendation Widget */}
+      {weakAreas.length > 0 && (
+        <div className="glass-panel p-6 border-l-4 border-l-accent-amber flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-2xl bg-accent-amber/15 border border-accent-amber/30 flex items-center justify-center text-accent-amber shrink-0">
+              <Brain className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-white">Recommended Target Revision</h3>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Gemini detected you need attention on <span className="text-white font-bold">{weakAreas[0].conceptName}</span>. Focus on this in AI Tutor or take a Quiz.
+              </p>
+            </div>
           </div>
-
-          <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-black text-white tracking-tight">7</span>
-            <span className="text-sm font-semibold text-gray-400">days</span>
-          </div>
-          <p className="text-xs text-gray-400">Keep it up! 🔥</p>
-
-          <div className="grid grid-cols-7 gap-2 pt-2">
-            {daysOfWeek.map((day, idx) => (
-              <div key={day} className="flex flex-col items-center gap-1.5">
-                <span className="text-[11px] text-gray-500 font-medium">{day}</span>
-                <div className={`h-8 w-8 rounded-full flex items-center justify-center text-white border text-xs font-bold ${
-                  idx < 6
-                    ? 'bg-primary border-primary-light/50 shadow-md shadow-indigo-500/20'
-                    : 'bg-surface border-surface-border text-gray-600'
-                }`}>
-                  {idx < 6 ? <Check className="h-4 w-4 stroke-[3]" /> : null}
-                </div>
-              </div>
-            ))}
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              href={`/tutor?q=Teach me ${encodeURIComponent(weakAreas[0].conceptName)}`}
+              className="btn-primary py-2.5 px-4 text-xs font-bold"
+            >
+              Review {weakAreas[0].conceptName}
+            </Link>
+            <Link
+              href="/quizzes"
+              className="btn-secondary py-2.5 px-4 text-xs font-bold text-accent-amber"
+            >
+              Take Quiz
+            </Link>
           </div>
         </div>
-
-        {/* Widget 2: Learning Progress Rocket */}
-        <div className="lg:col-span-7 glass-panel p-6 flex flex-col justify-between space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Rocket className="h-5 w-5 text-primary-light" />
-              <h3 className="text-base font-bold text-white">Learning Progress</h3>
-            </div>
-            <span className="text-sm font-black text-primary-light">68%</span>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs text-gray-400">
-              <span>Overall progress this month</span>
-              <span>Target: 100%</span>
-            </div>
-            <div className="h-3 w-full bg-background rounded-full overflow-hidden border border-surface-border p-0.5">
-              <div className="h-full bg-gradient-to-r from-primary to-accent-cyan rounded-full transition-all duration-500" style={{ width: '68%' }} />
-            </div>
-          </div>
-
-          <p className="text-xs text-gray-400">
-            You're doing great! Keep learning consistently to expand your personal AI memory bank.
-          </p>
-        </div>
-
-      </div>
+      )}
     </div>
   );
 }

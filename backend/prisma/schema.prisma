@@ -21,6 +21,8 @@ model User {
   concepts      Concept[]
   weakAreas     WeakArea[]
   conversations TutorConversation[]
+  quizzes       Quiz[]
+  quizAttempts  QuizAttempt[]
 
   @@map("users")
 }
@@ -135,4 +137,47 @@ model TutorMessage {
   createdAt      DateTime          @default(now())
 
   @@map("tutor_messages")
+}
+
+model Quiz {
+  id          String         @id @default(uuid())
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic       String
+  subject     String
+  difficulty  String         @default("MEDIUM")
+  createdAt   DateTime       @default(now())
+
+  questions   QuizQuestion[]
+  attempts    QuizAttempt[]
+
+  @@map("quizzes")
+}
+
+model QuizQuestion {
+  id            String   @id @default(uuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  questionText  String
+  type          String   // "MCQ" | "SHORT_ANSWER"
+  options       String?  // JSON stringified array for MCQ
+  correctAnswer String
+  explanation   String?
+
+  @@map("quiz_questions")
+}
+
+model QuizAttempt {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  score         Float
+  totalQuestions Int
+  userAnswers   String   // JSON stringified object
+  feedback      String?
+  createdAt     DateTime @default(now())
+
+  @@map("quiz_attempts")
 }

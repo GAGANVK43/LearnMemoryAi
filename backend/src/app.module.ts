@@ -8,6 +8,7 @@ import { MemoryRetrievalModule } from './memory-retrieval/memory-retrieval.modul
 import { StudySessionsModule } from './study-sessions/study-sessions.module';
 import { MemoryModule } from './memory/memory.module';
 import { TutorModule } from './tutor/tutor.module';
+import { QuizModule } from './quiz/quiz.module';
 import { StatsModule } from './stats/stats.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { StatsModule } from './stats/stats.module';
     StudySessionsModule,
     MemoryModule,
     TutorModule,
+    QuizModule,
     StatsModule,
   ],
 })

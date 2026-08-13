@@ -45,7 +45,6 @@ export class AIService {
       return await this.activeProvider.analyzeLearningContent(title, subject, content);
     } catch (error: any) {
       this.logger.error(`Error in analyzeLearningContent using ${this.activeProvider.name}: ${error.message}`);
-      // Do NOT silently switch to MockAIProvider during normal Gemini execution
       throw new InternalServerErrorException(
         `AI Service Error: We couldn't process your study session with ${this.activeProvider.name}. Please check configuration or try again.`
       );
@@ -76,6 +75,20 @@ export class AIService {
       throw new InternalServerErrorException(
         `AI Service Error: The AI Tutor is temporarily unavailable. Please try again.`
       );
+    }
+  }
+
+  async generateStructuredOutput(prompt: string): Promise<any> {
+    try {
+      if (this.activeProvider.generateStructuredOutput) {
+        return await this.activeProvider.generateStructuredOutput(prompt);
+      }
+      const rawText = await this.activeProvider.analyzeLearningContent('Quiz', 'General', prompt);
+      const cleaned = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      return JSON.parse(cleaned);
+    } catch (error: any) {
+      this.logger.error(`Error in generateStructuredOutput: ${error.message}`);
+      throw new InternalServerErrorException('AI Service Error: Failed to generate structured response.');
     }
   }
 }
